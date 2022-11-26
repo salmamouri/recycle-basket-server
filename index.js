@@ -24,6 +24,7 @@ async function run(){
     try{
    const usersCollection = client.db('recycleBasket').collection('users');
    const collectionsCollection = client.db('recycleBasket').collection('collections');
+   const productsCollection = client.db('recycleBasket').collection('products');
 
    app.get('/users',async(req,res)=>{
       const query ={};
@@ -57,6 +58,19 @@ async function run(){
       const query ={};
       const allCollection = await collectionsCollection.find(query).toArray();
       res.send(allCollection);
+     });
+
+     app.get('/products',async(req,res)=>{
+      const query={};
+      const allProducts = await productsCollection.find(query).toArray();
+      res.send(allProducts);
+     })
+     app.get('/products/:id',async(req,res)=>{
+      const id = req.params.id;
+      
+      const query= {collection_id:id}
+      const result= await productsCollection.find(query).toArray();
+      res.send(result);
      })
 
 
