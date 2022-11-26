@@ -23,6 +23,7 @@ const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology:
 async function run(){
     try{
    const usersCollection = client.db('recycleBasket').collection('users');
+   const collectionsCollection = client.db('recycleBasket').collection('collections');
 
    app.get('/users',async(req,res)=>{
       const query ={};
@@ -43,12 +44,21 @@ async function run(){
       const query= {email:email};
       const user = await usersCollection.findOne(query);
       if(user){
-            const token = jwt.sign({email}, process.env.ACCESS_TOKEN,{expiresIn:'12hr'});
+            const token = jwt.sign({email}, process.env.ACCESS_TOKEN,{expiresIn:'24hr'});
             return res.send({accessToken:token});
       }
       console.log(user);
       res.status(403).send('Unauthorized Access');
  })
+
+ //---- --Collections------
+ 
+ app.get('/collections',async(req,res)=>{
+      const query ={};
+      const allCollection = await collectionsCollection.find(query).toArray();
+      res.send(allCollection);
+     })
+
 
     }
     finally{
