@@ -25,6 +25,7 @@ async function run(){
    const usersCollection = client.db('recycleBasket').collection('users');
    const collectionsCollection = client.db('recycleBasket').collection('collections');
    const productsCollection = client.db('recycleBasket').collection('products');
+   const bookingsCollection = client.db('recycleBasket').collection('bookings');
 
    app.get('/users',async(req,res)=>{
       const query ={};
@@ -91,7 +92,19 @@ async function run(){
       res.send(user);
   })
 
-  
+  //--------------Bookings------------------
+  app.get('/bookings',async(req,res)=>{
+      const query ={};
+      const allBookings = await bookingsCollection.find(query).toArray();
+      res.send(allBookings);
+  })
+
+  app.post('/bookings',async(req,res)=>{
+      const booking = req.body;
+      console.log(booking);
+      const result = await bookingsCollection.insertOne(booking);
+      res.send(result);
+  })
 
 
     }
