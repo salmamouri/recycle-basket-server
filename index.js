@@ -3,7 +3,7 @@ const cors = require('cors');
 const port = process.env.PORT || 5000;
 const jwt = require('jsonwebtoken');
 require('dotenv').config();
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 
 const app = express();
 
@@ -65,13 +65,33 @@ async function run(){
       const allProducts = await productsCollection.find(query).toArray();
       res.send(allProducts);
      })
-     app.get('/products/:id',async(req,res)=>{
-      const id = req.params.id;
+
+     app.get('/products/:title',async(req,res)=>{
+      const title = req.params.title;
       
-      const query= {collection_id:id}
+      const query= {title:title}
       const result= await productsCollection.find(query).toArray();
       res.send(result);
      })
+
+
+  app.get('/product/:id',async(req,res)=>{
+      const id = req.params.id;
+      console.log(id)
+      const query = {_id:ObjectId(id)}
+      const result= await productsCollection.find(query).toArray();
+      res.send(result);
+  })
+  //----------users eamil
+  app.get('/users/:email',async(req,res)=>{
+      const email = req.params.email;
+      const query= {email:email};
+      const user = await usersCollection.findOne(query);
+      
+      res.send(user);
+  })
+
+  
 
 
     }
