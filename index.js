@@ -2,6 +2,8 @@ const express = require('express');
 const cors = require('cors');
 const port = process.env.PORT || 5000;
 const jwt = require('jsonwebtoken');
+
+const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 require('dotenv').config();
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 
@@ -114,6 +116,20 @@ async function run(){
       
       res.send(user);
   })
+  app.get('/user/:role',async(req,res)=>{
+      const role = req.params.role;
+      const query= {role:role};
+      const user = await usersCollection.find(query).toArray();
+      
+      res.send(user);
+  })
+
+  app.delete('/user/:id', async(req,res)=>{
+    const id = req.params.id;
+    const filter = { _id : ObjectId(id)};
+    const result = await usersCollection.deleteOne(filter);
+    res.send(result);
+  })
 ///-----------------------------------------//
   //--------------Bookings------------------//
   app.get('/bookings',async(req,res)=>{
@@ -135,7 +151,30 @@ async function run(){
     
     res.send(result);
   })
+  app.get('/bookings/:id',async (req,res)=>{
+    const id = req.params.id;
+    const query ={_id: ObjectId(id)};
+    const booking = await bookingsCollection.findOne(query);
+    res.send(booking);
+  })
 
+  //-------------------payment--------------//
+  app.post('/create-payment-intent', async(req,res)=>{
+    const booking = req.body;
+    const price = booking.price;
+    const amount = price * 100;
+
+    const paymentIntent = await stripe.paymentIntents.create({
+      currency:'usd',
+      amount: amount,
+      'payment_method_types':[
+        "card"
+      ]
+    });
+    res.send({
+      clientSecret: paymentIntent.client_secret,
+    })
+  })
 
     }
     finally{
