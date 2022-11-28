@@ -85,7 +85,7 @@ async function run(){
       res.send(result);
   })
 
-  app.get('/product/:email',async(req,res)=>{
+  app.get('/product',async(req,res)=>{
     const email = req.query.email;
     const query= {email:email};
     const prod = await productsCollection.find(query).toArray();
@@ -97,6 +97,14 @@ async function run(){
       const result= await productsCollection.insertOne(addProduct);
       res.send(result);
   })
+
+  app.delete('/product/:id', async(req,res)=>{
+    const id = req.params.id;
+    const filter = { _id : ObjectId(id)};
+    const result = await productsCollection.deleteOne(filter);
+    res.send(result);
+  })
+
   //------------------------------------//
   //----------users eamil-------------------//
   app.get('/users/:email',async(req,res)=>{
@@ -119,6 +127,13 @@ async function run(){
       console.log(booking);
       const result = await bookingsCollection.insertOne(booking);
       res.send(result);
+  })
+  app.get('/booking',async(req,res)=>{
+    const email = req.query.email;
+    const query= {email:email};
+    const result = await bookingsCollection.find(query).toArray();
+    
+    res.send(result);
   })
 
 
