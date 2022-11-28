@@ -60,17 +60,18 @@ async function run(){
       const allCollection = await collectionsCollection.find(query).toArray();
       res.send(allCollection);
      });
-
+     ///-----------------------------//
+//--------------Products-----------------//
      app.get('/products',async(req,res)=>{
       const query={};
       const allProducts = await productsCollection.find(query).toArray();
       res.send(allProducts);
      })
 
-     app.get('/products/:title',async(req,res)=>{
-      const title = req.params.title;
+     app.get('/products/:category',async(req,res)=>{
+      const category = req.params.category;
       
-      const query= {title:title}
+      const query= {category:category}
       const result= await productsCollection.find(query).toArray();
       res.send(result);
      })
@@ -83,7 +84,21 @@ async function run(){
       const result= await productsCollection.find(query).toArray();
       res.send(result);
   })
-  //----------users eamil
+
+  app.get('/product/:email',async(req,res)=>{
+    const email = req.query.email;
+    const query= {email:email};
+    const prod = await productsCollection.find(query).toArray();
+    
+    res.send(prod);
+})
+  app.post('/products',async(req,res)=>{
+      const addProduct = req.body;
+      const result= await productsCollection.insertOne(addProduct);
+      res.send(result);
+  })
+  //------------------------------------//
+  //----------users eamil-------------------//
   app.get('/users/:email',async(req,res)=>{
       const email = req.params.email;
       const query= {email:email};
@@ -91,8 +106,8 @@ async function run(){
       
       res.send(user);
   })
-
-  //--------------Bookings------------------
+///-----------------------------------------//
+  //--------------Bookings------------------//
   app.get('/bookings',async(req,res)=>{
       const query ={};
       const allBookings = await bookingsCollection.find(query).toArray();
